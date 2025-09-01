@@ -1,0 +1,125 @@
+db conn and insertion to collections...
+//////////////////////////////////////
+from flask import Flask,request,jsonify     
+from flask_cors import CORS
+from pymongo import MongoClient
+app = Flask(__name__)
+CORS(app)
+client=MongoClient("mongodb://localhost:27017/")
+database=client["mca_asiet"]
+faculty_collection=database["faculty"]
+@app.route("/add_faculty", methods=["POST"])
+def add_faculty():
+    data = request.json
+    faculty_name = data.get("faculty_name")
+    faculty_email = data.get("faculty_email")
+    faculty_exp = data.get("faculty_exp")
+    faculty_description = data.get("faculty_description") 
+    faculty_qualification = data.get("faculty_qualification")
+
+    if not all([faculty_name, faculty_email, faculty_exp, faculty_description, faculty_qualification]):
+        return jsonify({"message": "All fields are required"}), 400
+
+    new_faculty = {
+        "faculty_name": faculty_name,
+        "faculty_email": faculty_email,
+        "faculty_exp": faculty_exp,
+        "faculty_description": faculty_description,
+        "faculty_qualification": faculty_qualification
+    }
+
+    print("Inserting faculty:", new_faculty) 
+    faculty_collection.insert_one(new_faculty)
+
+    return jsonify({"message": "Faculty added successfully"}), 201
+@app.route("/")
+def home():
+    return jsonify({"message": "connected"})
+if __name__ == "__main__":
+    app.run(debug=True)
+    qualification
+////////////////////////////
+showing data as tables
+/////////////////////////////
+<h3>Faculty List</h3>
+      <table border="1" style={{ width: '100%', borderCollapse: 'collapse' }}>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Qualification</th>
+      <th>Email</th>
+      <th>Experience</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    {faculty.map((i, index) => (
+      <tr key={index}>
+        <td>{i.faculty_name}</td>
+        <td>{i.faculty_qualification}</td>
+        <td>{i.faculty_email}</td>
+        <td>{i.faculty_exp}</td>
+        <td>{i.faculty_description}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+Personal Information
+
+Name of the student
+
+Date of Birth
+
+Gender
+
+Address (Permanent/Communication)
+
+Phone / Mobile number
+
+Email ID
+
+Religion / Caste (maybe included, I saw related fields)
+
+Nationality
+
+👨‍👩‍👧 Parent / Guardian Details
+
+Father’s Name
+
+Occupation
+
+Contact Number
+
+Mother’s Name
+
+Occupation
+
+Contact Number
+
+Guardian’s Name & Contact (if applicable)
+
+🎓 Educational Details
+
+SSLC / 10th (School name, Year of passing, Marks / % / Grade)
+
+Plus Two / 12th (School name, Year of passing, Marks / % / Grade)
+
+UG (Degree, College, University, Year of passing, Marks / % / Grade)
+
+Any other qualifications
+
+📑 Uploads / Attachments
+
+Passport size Photo
+
+Certificates (10th, 12th, UG, etc.)
+
+ID Proof (Aadhaar, Driving License, e
+
+
+#*********VIEW APPLICATIONS*************
+
+@app.route("/Viewapplications", methods=["GET"])
+def view_applications():
+    applications = list(application_form.find({}, {"_id": 0}))
+    return jsonify(applications),200
