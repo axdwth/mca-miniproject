@@ -115,6 +115,7 @@ def register_admin():
 def student_applications():
     try:
         # --- Text fields ---
+        #year=datetime.now().year
         stud_name = request.form.get("stud_name")
         stud_email = request.form.get("stud_email")
         stud_dob = request.form.get("stud_dob")
@@ -125,6 +126,8 @@ def student_applications():
         stud_percentage = request.form.get("ug_marks") or request.form.get("plustwo_marks")
         stud_math = request.form.get("has_math")
         stud_lbs = request.form.get("entrance_exam_score")
+        stud_lbsrank = request.form.get("entrance_exam_rank")
+        stud_lbsregno = request.form.get("entrance_exam_reg_no")
 
         # --- File fields ---
         stud_photo = request.files.get("stud_photo")
@@ -132,6 +135,7 @@ def student_applications():
         stud_10_certificate = request.files.get("stud_10_certificate")
         stud_plustwo_certificate = request.files.get("stud_plustwo_certificate")
         stud_degree_certificate = request.files.get("stud_degree_certificate")
+        stud_lbs_result= request.files.get("stud_lbs_result")
 
         # Validate required fields
         if not all([stud_name, stud_email, stud_dob, stud_phone, stud_address, stud_qualification, stud_category, stud_percentage]):
@@ -169,9 +173,13 @@ def student_applications():
             filename = secure_filename(stud_degree_certificate.filename)
             stud_degree_certificate.save(os.path.join(CERTIFICATE_FOLDER, filename))
             file_paths["stud_degree_certificate"] = f"/uploads/certificates/{filename}"
-
+        if stud_lbs_result:
+            filename = secure_filename(stud_lbs_result.filename)
+            stud_lbs_result.save(os.path.join(CERTIFICATE_FOLDER, filename))
+            file_paths["stud_lbs_result"] = f"/uploads/certificates/{filename}"
         # Save application in MongoDB
         new_application = {
+            "stud_regid": f"MCA{int(datetime.now().timestamp())}",  # Example regid
             "stud_name": stud_name,
             "stud_email": stud_email,
             "stud_dob": stud_dob,
@@ -182,12 +190,14 @@ def student_applications():
             "stud_percentage": stud_percentage,
             "stud_math": stud_math,
             "stud_lbs": stud_lbs,
+            "stud_lbsrank": stud_lbsrank,
+            "stud_lbsregno": stud_lbsregno,
             "files": file_paths,
             "submitted_at": datetime.now().isoformat()
         }
 
         application_form.insert_one(new_application)
-        return jsonify({"message": "Application submitted successfully"}), 201
+        return jsonify({"message": "Application submitted successfully !"}), 201
 
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"}), 500
@@ -232,7 +242,7 @@ def Updatecriteria():
     }
     print("Added Application:", new_application)
     application_form.insert_one(new_application)
-    return jsonify({"message":"Application Submitted successfully"}),201
+    return jsonify({"message":"Application Submitted successfully !"}),201 
 #**************HOME ROUTE*********************
 @app.route("/")
 def home():
