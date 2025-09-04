@@ -26,6 +26,8 @@ export default function ApplicationForm() {
     stud_qualification: "",
     has_math: false,
     entrance_exam_score: "",
+    entrance_exam_rank: "",
+    entrance_exam_reg_no: "",
 
     // Parents
     father_name: "",
@@ -91,6 +93,55 @@ const yearOptions = generateYears(1900, currentYear);
     } catch (err) {
       setMessage("Submission failed", err.message);
     }
+    if (message === "Application Submitted Successfully") {
+      window.location("/");
+      setFormData(
+      {stud_name: "",
+    stud_email: "",
+    stud_dob: "",
+    stud_phone: "",
+    stud_address: "",
+    stud_gender: "",
+    stud_religion: "",
+    stud_nationality: "",
+    stud_category: "",
+
+    // Academics
+    sslc_school: "",
+    sslc_year: "",
+    sslc_marks: "",
+    plustwo_school: "",
+    plustwo_year: "",
+    plustwo_marks: "",
+    ug_college: "",
+    ug_year: "",
+    ug_marks: "",
+    stud_qualification: "",
+    has_math: false,
+    entrance_exam_score: "",
+    entrance_exam_rank: "",
+    entrance_exam_reg_no: "",
+    // Parents
+    father_name: "",
+    father_occupation: "",
+    father_phone: "",
+    mother_name: "",
+    mother_occupation: "",
+    mother_phone: "",
+
+    // File uploads
+    stud_photo: null,
+    stud_id: null,
+    stud_10_certificate: null,
+    stud_plustwo_certificate: null,
+    stud_degree_certificate: null,
+
+    // Declaration
+    declaration: false,
+
+      }
+      );
+    }
   };
 
   return (
@@ -123,6 +174,7 @@ const yearOptions = generateYears(1900, currentYear);
         name="stud_dob"
         value={formData.stud_dob}
         onChange={handleChange}
+        placeholder="Date of Birth"
         required
       />
       <input
@@ -312,14 +364,43 @@ const yearOptions = generateYears(1900, currentYear);
         />
         Studied Mathematics
       </label>
-      <br/><input
+        <h3>Mode of Admission</h3>
+        <select
+        name="stud_addmission_type"
+        value={formData.stud_addmission_type}
+        onChange={handleChange}
+        required
+      >
+        <option value="">Select </option>
+    <option value="Lbs Quota">Lbs/Merit</option>
+  <option value="Management Quota">Management</option>
+      </select>
+
+      <br/>
+      <label>Entrance examination</label>
+      <input
+        type="number"
+        name="entrance_exam_reg_no"
+        value={formData.entrance_exam_reg_no}
+        onChange={handleChange}
+        placeholder="Entrance Exam Registration No"
+      />
+       <input
         type="text"
         name="entrance_exam_score"
         value={formData.entrance_exam_score}
         onChange={handleChange}
         placeholder="Entrance Exam Score"
       />
-
+       <input
+        type="text"
+        name="entrance_exam_rank"
+        value={formData.entrance_exam_rank}
+        onChange={handleChange}
+        placeholder="Entrance Exam Rank"
+      />
+      <label htmlFor="">Lbs marklist</label>
+      <input type="file" name="stud_lbs_result" onChange={handleChange} required />
       <h3>Parents</h3>
 <div className="row">
   <input
@@ -376,17 +457,6 @@ const yearOptions = generateYears(1900, currentYear);
       <input type="file" name="stud_photo" onChange={handleChange} required />
       <label htmlFor="">Student id proof</label>
       <input type="file" name="stud_id" onChange={handleChange} required />
-  <h3>Mode of Admission</h3>
-        <select
-        name="stud_addmission_type"
-        value={formData.stud_addmission_type}
-        onChange={handleChange}
-        required
-      >
-        <option value="">Select </option>
-    <option value="Lbs Quota">Lbs/Merit</option>
-  <option value="Management Quota">Management</option>
-      </select>
 
       <label>
         <input

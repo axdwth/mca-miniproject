@@ -1,9 +1,9 @@
 
 
 .navbar {
-  background: #4a90e2;
+  
   padding: 1rem 2rem;
-  color: white;
+  color: rgb(192, 0, 0);
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
@@ -14,13 +14,13 @@
 }
 
 .navbar-logo {
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #fff;
+  font-size: 1%;
+  width: auto;
+  height: auto;
 }
 
 .navbar-links a {
-  color: white;
+  color: rgb(4, 60, 112);
   margin-left: 1.2rem;
   text-decoration: none;
   font-size: 1rem;
@@ -28,7 +28,7 @@
 }
 
 .navbar-links a:hover {
-  color: #dfe9f3;
+  color: #006ad4;
   border-bottom: 2px solid rgb(30, 0, 0);
   padding-bottom: 2px;
 }
