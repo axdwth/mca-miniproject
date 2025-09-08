@@ -4,6 +4,10 @@ from pymongo import MongoClient
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
+import secrets
+from bson import ObjectId
+ 
+tokens={}
 
 app = Flask(__name__)
 #CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
@@ -115,30 +119,54 @@ def register_admin():
 def student_applications():
     try:
         # --- Text fields ---
-        #year=datetime.now().year
         stud_name = request.form.get("stud_name")
         stud_email = request.form.get("stud_email")
         stud_dob = request.form.get("stud_dob")
         stud_phone = request.form.get("stud_phone")
         stud_address = request.form.get("stud_address")
-        stud_qualification = request.form.get("stud_qualification")
+        stud_gender = request.form.get("stud_gender")
+        stud_religion = request.form.get("stud_religion")
+        stud_nationality = request.form.get("stud_nationality")
         stud_category = request.form.get("stud_category")
-        stud_percentage = request.form.get("ug_marks") or request.form.get("plustwo_marks")
-        stud_math = request.form.get("has_math")
-        stud_lbs = request.form.get("entrance_exam_score")
-        stud_lbsrank = request.form.get("entrance_exam_rank")
-        stud_lbsregno = request.form.get("entrance_exam_reg_no")
 
-        # --- File fields ---
+        # --- Academics ---
+        sslc_school = request.form.get("sslc_school")
+        sslc_year = request.form.get("sslc_year")
+        sslc_marks = request.form.get("sslc_marks")
+        plustwo_school = request.form.get("plustwo_school")
+        plustwo_year = request.form.get("plustwo_year")
+        plustwo_marks = request.form.get("plustwo_marks")
+        ug_college = request.form.get("ug_college")
+        ug_year = request.form.get("ug_year")
+        ug_marks = request.form.get("ug_marks")
+        stud_qualification = request.form.get("stud_qualification")
+        has_math = request.form.get("has_math")  # boolean true/false
+        entrance_exam_score = request.form.get("entrance_exam_score")
+        entrance_exam_rank = request.form.get("entrance_exam_rank")
+        entrance_exam_reg_no = request.form.get("entrance_exam_reg_no")
+
+        # --- Parents ---
+        father_name = request.form.get("father_name")
+        father_occupation = request.form.get("father_occupation")
+        father_phone = request.form.get("father_phone")
+        mother_name = request.form.get("mother_name")
+        mother_occupation = request.form.get("mother_occupation")
+        mother_phone = request.form.get("mother_phone")
+
+        # --- File uploads ---
         stud_photo = request.files.get("stud_photo")
         stud_id = request.files.get("stud_id")
         stud_10_certificate = request.files.get("stud_10_certificate")
         stud_plustwo_certificate = request.files.get("stud_plustwo_certificate")
         stud_degree_certificate = request.files.get("stud_degree_certificate")
-        stud_lbs_result= request.files.get("stud_lbs_result")
+        stud_lbs_result = request.files.get("stud_lbs_result")
 
         # Validate required fields
-        if not all([stud_name, stud_email, stud_dob, stud_phone, stud_address, stud_qualification, stud_category, stud_percentage]):
+        required_fields = [
+            stud_name, stud_email, stud_dob, stud_phone, stud_address,
+            stud_qualification, stud_category
+        ]
+        if not all(required_fields):
             return jsonify({"message": "All required fields must be filled"}), 400
 
         # Prevent duplicates
@@ -173,35 +201,69 @@ def student_applications():
             filename = secure_filename(stud_degree_certificate.filename)
             stud_degree_certificate.save(os.path.join(CERTIFICATE_FOLDER, filename))
             file_paths["stud_degree_certificate"] = f"/uploads/certificates/{filename}"
+
         if stud_lbs_result:
             filename = secure_filename(stud_lbs_result.filename)
             stud_lbs_result.save(os.path.join(CERTIFICATE_FOLDER, filename))
             file_paths["stud_lbs_result"] = f"/uploads/certificates/{filename}"
-        # Save application in MongoDB
+
+        # --- Save application in MongoDB ---
         new_application = {
-            "stud_regid": f"MCA{int(datetime.now().timestamp())}",  # Example regid
+            "stud_regid": f"MCA{int(datetime.now().timestamp())}",
+            
+            # Personal
             "stud_name": stud_name,
             "stud_email": stud_email,
             "stud_dob": stud_dob,
+            "stud_gender": stud_gender,
+            "stud_religion": stud_religion,
             "stud_phone": stud_phone,
             "stud_address": stud_address,
-            "stud_qualification": stud_qualification,
+            "stud_nationality": stud_nationality,
             "stud_category": stud_category,
-            "stud_percentage": stud_percentage,
-            "stud_math": stud_math,
-            "stud_lbs": stud_lbs,
-            "stud_lbsrank": stud_lbsrank,
-            "stud_lbsregno": stud_lbsregno,
-            "files": file_paths,
+
+            # Academics
+            "sslc_school": sslc_school,
+            "sslc_year": sslc_year,
+            "sslc_marks": sslc_marks,
+            "plustwo_school": plustwo_school,
+            "plustwo_year": plustwo_year,
+            "plustwo_marks": plustwo_marks,
+            "ug_college": ug_college,
+            "ug_year": ug_year,
+            "ug_marks": ug_marks,
+            "stud_qualification": stud_qualification,
+            "has_math": has_math,
+            "entrance_exam_score": entrance_exam_score,
+            "entrance_exam_rank": entrance_exam_rank,
+            "entrance_exam_reg_no": entrance_exam_reg_no,
+
+            # Parents
+            "father_name": father_name,
+            "father_occupation": father_occupation,
+            "father_phone": father_phone,
+            "mother_name": mother_name,
+            "mother_occupation": mother_occupation,
+            "mother_phone": mother_phone,
+
+            # Files
+            "stud_photo": file_paths.get("stud_photo"),
+            "stud_id": file_paths.get("stud_id"),
+            "stud_10_certificate": file_paths.get("stud_10_certificate"),
+            "stud_plustwo_certificate": file_paths.get("stud_plustwo_certificate"),
+            "stud_degree_certificate": file_paths.get("stud_degree_certificate"),
+            "stud_lbs_result": file_paths.get("stud_lbs_result"),
+
+            # Submitted time
             "submitted_at": datetime.now().isoformat()
         }
 
-        application_form.insert_one(new_application)
-        return jsonify({"message": "Application submitted successfully !"}), 201
+        result=application_form.insert_one(new_application)
+        new_application["_id"] = str(result.inserted_id)
+        return jsonify({"message": "Application submitted successfully!", "data": new_application}), 201
 
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"}), 500
-
 
 
 #*********VIEW APPLICATIONS*************
@@ -209,40 +271,26 @@ def student_applications():
 @app.route("/Viewapplications", methods=["GET"])
 def viewapplications():
     applications = list(application_form.find({}, {"_id": 0}))
+    for i in applications:
+        token=secrets.token_urlsafe(8)
+        tokens[token]=i['stud_email']
+        i['token']=token
     return jsonify(applications),200
 
-#*********UPDATE CRITERIA*************
-@app.route("/update-criteria", methods=["POST"])
-def Updatecriteria():
-    data=request.json
-    print("Recived",data)
-    degree=data.get("stud_degree")
-    plustwo=data.get("stud_plustwo")
-    stream=data.get("stud_stream")
-    stud_address=data.get("stud_address")
-    stud_qualification=data.get("stud_qualification")
 
-    if not all([stud_name,stud_email,stud_dob,stud_phone,stud_address,stud_qualification]):
-        return jsonify({"message":"allfields are required"}),400    
-    # Check if the email already exists
-    if application_form.find_one({"student_email":stud_email}):
-        return jsonify({"message":f"Application with{stud_email}email"}),400
-    #check phone exits
-    if application_form.find_one({"student_phone":stud_phone}):
-        return jsonify({"message":f"Application with phone number{stud_phone}exits"}),400
-    
-    new_application={
-        "student_name":stud_name,#stud=frntend
-        "student_email":stud_email,
-        "student_dob":stud_dob,
-        "student_phone":stud_phone,
-        "student_address":stud_address,
-        "student_qualification":stud_qualification,
-        "submitted_at": datetime.now().isoformat() # Store the application submitted time
-    }
-    print("Added Application:", new_application)
-    application_form.insert_one(new_application)
-    return jsonify({"message":"Application Submitted successfully !"}),201 
+#*********VIEW APPLICATIONdeatil*************
+
+@app.route("/Viewapplicationdetails/<token>", methods=["GET"])
+def view_application_detail_token(token):
+    email=tokens.get(token)
+    if not email:
+        return jsonify({"message":"Invalid or expired token"}),404
+    applications = application_form.find_one({"stud_email":email},{"_id": 0})
+    if applications is None:
+        return jsonify({"message":"Application not found"}),404
+    return jsonify(applications), 200
+
+#*********UPDATE CRITERIA*************
 #**************HOME ROUTE*********************
 @app.route("/")
 def home():

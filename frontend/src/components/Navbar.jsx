@@ -8,12 +8,11 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-logo">
-          <img src={Asiet} alt="ASIET" />
+          <img src={Asiet} alt="ASIET"/>
         </div>
         <div className="navbar-links">
           <Link to="/">Home</Link>
           <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
           <Link to="/admin">Admin Dashboard</Link>
         </div>
       </div>

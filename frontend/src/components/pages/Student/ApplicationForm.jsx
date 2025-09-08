@@ -73,77 +73,74 @@ const yearOptions = generateYears(1900, currentYear);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage("Submitting...");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setMessage("Submitting...");
 
-    try {
-      const data = new FormData();
-      for (let key in formData) {
+  try {
+    const data = new FormData();
+    for (let key in formData) {
+      if (formData[key] !== null && formData[key] !== undefined) {
         data.append(key, formData[key]);
       }
+    }
 
-      const res = await fetch("http://localhost:5000/student_applications", {
-        method: "POST",
-        body: data,
+    const res = await fetch("http://localhost:5000/student_applications", {
+      method: "POST",
+      body: data,
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      setMessage("Application Submitted Successfully");
+      setFormData({
+        // reset all fields to initial empty values
+        stud_name: "",
+        stud_email: "",
+        stud_dob: "",
+        stud_phone: "",
+        stud_address: "",
+        stud_gender: "",
+        stud_religion: "",
+        stud_nationality: "",
+        stud_category: "",
+        sslc_school: "",
+        sslc_year: "",
+        sslc_marks: "",
+        plustwo_school: "",
+        plustwo_year: "",
+        plustwo_marks: "",
+        ug_college: "",
+        ug_year: "",
+        ug_marks: "",
+        stud_qualification: "",
+        has_math: false,
+        entrance_exam_score: "",
+        entrance_exam_rank: "",
+        entrance_exam_reg_no: "",
+        father_name: "",
+        father_occupation: "",
+        father_phone: "",
+        mother_name: "",
+        mother_occupation: "",
+        mother_phone: "",
+        stud_photo: null,
+        stud_id: null,
+        stud_10_certificate: null,
+        stud_plustwo_certificate: null,
+        stud_degree_certificate: null,
+        stud_lbs_result: null,
+        declaration: false,
       });
-
-      const result = await res.json();
-      setMessage(result.message || "Application Submitted Successfully");
-    } catch (err) {
-      setMessage("Submission failed", err.message);
+      window.location.href = "/";
+    } else {
+      setMessage(result.message || "Submission failed");
     }
-    if (message === "Application Submitted Successfully") {
-      window.location("/");
-      setFormData(
-      {stud_name: "",
-    stud_email: "",
-    stud_dob: "",
-    stud_phone: "",
-    stud_address: "",
-    stud_gender: "",
-    stud_religion: "",
-    stud_nationality: "",
-    stud_category: "",
-
-    // Academics
-    sslc_school: "",
-    sslc_year: "",
-    sslc_marks: "",
-    plustwo_school: "",
-    plustwo_year: "",
-    plustwo_marks: "",
-    ug_college: "",
-    ug_year: "",
-    ug_marks: "",
-    stud_qualification: "",
-    has_math: false,
-    entrance_exam_score: "",
-    entrance_exam_rank: "",
-    entrance_exam_reg_no: "",
-    // Parents
-    father_name: "",
-    father_occupation: "",
-    father_phone: "",
-    mother_name: "",
-    mother_occupation: "",
-    mother_phone: "",
-
-    // File uploads
-    stud_photo: null,
-    stud_id: null,
-    stud_10_certificate: null,
-    stud_plustwo_certificate: null,
-    stud_degree_certificate: null,
-
-    // Declaration
-    declaration: false,
-
-      }
-      );
-    }
-  };
-
+  } catch (err) {
+    setMessage("Submission failed: " + err.message);
+  }
+};
   return (
     <form onSubmit={handleSubmit}>
       <center>
@@ -217,7 +214,7 @@ const yearOptions = generateYears(1900, currentYear);
         onChange={handleChange}
         required
       >
-        <option value="General">Select categroy</option>
+        <option value="">Select categroy</option>
     <option value="General">General</option>
   <option value="OBC">OBC</option>
   <option value="SC/ST">SC/ST</option>

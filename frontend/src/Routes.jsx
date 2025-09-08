@@ -7,6 +7,7 @@ import AdminDashboard from "./components/pages/Admin/Admindashboard"; // Added n
 import  ManageFaculty  from './components/pages/Admin/Managefaculty'; // Added new component
 import ViewApplications from './components/pages/Admin/Viewapplications';
 import Updatecriteria from "./components/pages/Admin/updatecriteria"; // Added new component
+import Applicationdetails from "./components/pages/Admin/Applicationdetails"; // Added new component
 export default function ARoutes() {
   return (
     <Routes>
@@ -17,7 +18,8 @@ export default function ARoutes() {
         <Route path="/admin/*" element={<AdminDashboard />} />
         <Route path="/admin/managefaculty" element={<ManageFaculty />} /> 
         <Route path="/admin/viewapplications" element={<ViewApplications/>} /> 
-         <Route path="/admin/updatecriteria" element={< Updatecriteria/>} /> 
+         <Route path="/admin/updatecriteria" element={< Updatecriteria/>} />
+          <Route path="/admin/applicationdetails/:token" element={< Applicationdetails/>} /> 
       {/* routes */}
     </Routes>
   );

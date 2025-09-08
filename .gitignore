@@ -2,7 +2,7 @@
 # Python venv
 .venv/
 venv/
-ENV/
+ENV/        
 # Logs
 logs
 *.log

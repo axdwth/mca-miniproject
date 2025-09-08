@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import "../../../styles/Viewapplication.css"; // import CSS
-
+//import { Link, Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 export default function ViewApplications() {
   const [applications, setApplications] = useState([]);
+  const Navigate=useNavigate();
   useEffect(() => {
     const fetchApplications = async () => {
       try {
@@ -48,8 +50,8 @@ export default function ViewApplications() {
                 <td>{i.stud_lbs}</td>
                 <td>{new Date(i.submitted_at).toLocaleString()}</td>
                 <td>
-                  <button className="view-btn" onClick={() => alert(`Viewing ${i.index}`)}>
-                    View details
+                  <button className="view-btn"  onClick={() => Navigate(`/admin/applicationdetails/${i.token}`)}>
+                  View Details
                   </button>
                 </td>
               </tr>
