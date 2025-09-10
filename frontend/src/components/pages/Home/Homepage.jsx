@@ -9,12 +9,12 @@ export default function Home() {
       {/* Hero Section */}
       <header className="hero">
         <div className="hero-content">
-          <h1>Welcome to the MCA Department</h1>
+          <h1>Welcome to MCA Department</h1>
           <p>
             Your gateway to knowledge, innovation, and a bright career in
             Computer Applications.
           </p>
-        <Link to="/register">
+        <Link to="/newregistration">
   <button className="btn primary">Register Now</button>
 </Link>
         <Link to="/login">

@@ -24,7 +24,6 @@ export default function ApplicationForm() {
     ug_year: "",
     ug_marks: "",
     stud_qualification: "",
-    has_math: false,
     entrance_exam_score: "",
     entrance_exam_rank: "",
     entrance_exam_reg_no: "",
@@ -43,7 +42,6 @@ export default function ApplicationForm() {
     stud_10_certificate: null,
     stud_plustwo_certificate: null,
     stud_degree_certificate: null,
-
     // Declaration
     declaration: false,
   });
@@ -115,7 +113,6 @@ const handleSubmit = async (e) => {
         ug_year: "",
         ug_marks: "",
         stud_qualification: "",
-        has_math: false,
         entrance_exam_score: "",
         entrance_exam_rank: "",
         entrance_exam_reg_no: "",
@@ -218,7 +215,6 @@ const handleSubmit = async (e) => {
     <option value="General">General</option>
   <option value="OBC">OBC</option>
   <option value="SC/ST">SC/ST</option>
-  <option value="EWS">EWS</option>
       </select>
       <input
         type="text"

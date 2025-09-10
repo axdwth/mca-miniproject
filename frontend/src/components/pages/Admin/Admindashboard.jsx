@@ -13,6 +13,7 @@ export default function AdminDashboard() {
           <li className="nav-item"><Link to="/admin/viewapplications" className="nav-link">New Applications</Link></li>
           <li className="nav-item"><Link to="/admin/accepted" className="nav-link">Accepted Applications</Link></li>
           <li className="nav-item"><Link to="/admin/queue" className="nav-link">Watinglist Applications</Link></li>
+          <li className="nav-item"><Link to="/admin/queue" className="nav-link">Regeed</Link></li>
         </ul>
       </nav>
     </div>

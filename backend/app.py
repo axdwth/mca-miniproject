@@ -6,7 +6,9 @@ from datetime import datetime
 import os
 import secrets
 from bson import ObjectId
- 
+from flask import Flask
+from routes.newreg import newreg_bp
+
 tokens={}
 
 app = Flask(__name__)
@@ -139,8 +141,7 @@ def student_applications():
         ug_college = request.form.get("ug_college")
         ug_year = request.form.get("ug_year")
         ug_marks = request.form.get("ug_marks")
-        stud_qualification = request.form.get("stud_qualification")
-        has_math = request.form.get("has_math")  # boolean true/false
+        stud_qualification = request.form.get("stud_qualification") # boolean true/false
         entrance_exam_score = request.form.get("entrance_exam_score")
         entrance_exam_rank = request.form.get("entrance_exam_rank")
         entrance_exam_reg_no = request.form.get("entrance_exam_reg_no")
@@ -233,7 +234,6 @@ def student_applications():
             "ug_year": ug_year,
             "ug_marks": ug_marks,
             "stud_qualification": stud_qualification,
-            "has_math": has_math,
             "entrance_exam_score": entrance_exam_score,
             "entrance_exam_rank": entrance_exam_rank,
             "entrance_exam_reg_no": entrance_exam_reg_no,
@@ -295,6 +295,7 @@ def view_application_detail_token(token):
 @app.route("/")
 def home():
     return jsonify({"message": "connected"}) 
-
+# Register the newreg blueprint
+app.register_blueprint(newreg_bp, url_prefix="/newreg")
 if __name__ == "__main__":
     app.run(debug=True)

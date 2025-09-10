@@ -1,52 +1,55 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import "../../../styles/Login.css"; 
+import React, { useState } from "react";
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("Logging in...");
 
-    if (!email || !password) {
-      setError("Please enter both email and password");
-      return;
+    try {
+      const res = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        setMessage(result.message);
+        // Redirect or set auth state here
+      } else {
+        setMessage(result.message);
+      }
+    } catch (err) {
+      setMessage("Error: " + err.message);
     }
-
-    setError('');
-    setEmail('');
-    setPassword('');
-    alert("Login successful ✅");
   };
 
   return (
-    <div className="login-container">
+    <div style={{ maxWidth: "400px", margin: "50px auto" }}>
       <h2>Login</h2>
-      <form onSubmit={handleSubmit} className="login-form">
+      <form onSubmit={handleSubmit}>
         <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
-        {error && <p className="error-text">{error}</p>}
         <button type="submit">Login</button>
       </form>
-
-      <p className="login-footer">
-        Don't have an account? <Link to="/register">Sign Up</Link>
-      </p>
-      <p className="login-footer">
-        Forgot your password? <Link to="/reset-password">Reset Password</Link>
-      </p>
+      <p>{message}</p>
     </div>
   );
 }
