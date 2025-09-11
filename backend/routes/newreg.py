@@ -7,6 +7,8 @@ from config import database  # assuming you have database in config.py
 
 newreg_bp = Blueprint("newreg_bp", __name__)
 newreg_collection = database["newreg"]
+student_collection = database["students"]
+
 
 # Upload folders
 UPLOAD_FOLDER = "uploads"
@@ -124,3 +126,8 @@ def mark_fee_paid(student_id):
 
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"}), 500
+    
+from flask import send_from_directory
+@newreg_bp.route('/uploads/photos/<path:filename>')
+def get_photo(filename):
+    return send_from_directory("uploads/photos", filename)

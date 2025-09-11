@@ -9,6 +9,7 @@ application_form = database["applications"]
 admin_collection = database["admin"]
 criteria_collection = database["eligibility"]
 newreg_collection = database["newreg"]
+student_collection = database["students"]
 
 # Upload folder (optional, for photos)
 UPLOAD_FOLDER = "uploads"

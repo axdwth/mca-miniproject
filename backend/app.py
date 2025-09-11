@@ -291,11 +291,36 @@ def view_application_detail_token(token):
     return jsonify(applications), 200
 
 #*********UPDATE CRITERIA*************
+from flask import send_from_directory
+
+@app.route('/uploads/photos/<path:filename>')
+def get_photo(filename):
+    return send_from_directory("uploads/photos", filename)
+
+
 #**************HOME ROUTE*********************
 @app.route("/")
 def home():
     return jsonify({"message": "connected"}) 
 # Register the newreg blueprint
 app.register_blueprint(newreg_bp, url_prefix="/newreg")
+
+@app.route("/login", methods=["POST"])
+def admin_login():
+    data = request.json
+    username = data.get("username")
+    password = data.get("password")
+
+    if not username or not password:
+        return jsonify({"message": "Username and password are required"}), 400
+
+    admincred = admin.find_one({"email": username, "password": password})
+    if not admincred:
+        return jsonify({"message": "Invalid credentials"}), 401
+
+    return jsonify({
+        "message": "Login successful", 
+    }), 200
+
 if __name__ == "__main__":
     app.run(debug=True)
