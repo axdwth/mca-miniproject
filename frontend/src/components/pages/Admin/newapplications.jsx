@@ -97,8 +97,5 @@ export default function Newapplicationdetailsapplicationdetails() {
   <p><b>Submitted At:</b> {new Date(application.submitted_at).toLocaleString()}</p>
     <button>Accept</button>
   </div>
-  
-    
-
   );
 }
