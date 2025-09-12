@@ -4,8 +4,9 @@ from config import newreg_collection
 import os
 from dotenv import load_dotenv
 
+# This is the correct, safe way to load the key
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "../.env"))
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")  
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 payment_bp = Blueprint("payment", __name__)
 
@@ -40,6 +41,7 @@ def payment_intent_route():
     if "error" in result:
         return jsonify(result), 400
 
+    # Using the correct collection name
     update_result = newreg_collection.update_one(
         {"stud_email": email},
         {"$set": {"payment_status": "pending"}}
@@ -56,6 +58,7 @@ def confirm_payment():
     if not email:
         return jsonify({"error": "Email required"}), 400
 
+    # Using the correct collection name
     update_result = newreg_collection.update_one(
         {"stud_email": email},
         {"$set": {"payment_status": "paid"}}

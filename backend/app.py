@@ -8,6 +8,7 @@ import secrets
 from bson import ObjectId
 from flask import Flask
 from routes.newreg import newreg_bp
+from routes.payment import payment_bp
 
 tokens={}
 
@@ -304,6 +305,8 @@ def home():
     return jsonify({"message": "connected"}) 
 # Register the newreg blueprint
 app.register_blueprint(newreg_bp, url_prefix="/newreg")
+app.register_blueprint(payment_bp, url_prefix="/payment")
+#payment blueprint
 @app.route("/login", methods=["POST"])
 def admin_login():
     data = request.json

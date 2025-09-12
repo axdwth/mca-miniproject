@@ -24,7 +24,7 @@ export default function ARoutes() {
          <Route path="/admin/updatecriteria" element={< Updatecriteria/>} />
           <Route path="/admin/applicationdetails/:token" element={< Applicationdetails/>} /> 
           <Route path="/newregistration" element={< Newreg/>} />
-          <Route path="/newreg/payfee/:studentId" element={< Payment/>} />
+          <Route path="/newreg/payfee/:studentEmail" element={< Payment/>} />
       {/* routes */}
     </Routes>
   );

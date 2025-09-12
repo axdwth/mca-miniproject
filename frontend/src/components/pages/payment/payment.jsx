@@ -1,118 +1,78 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
-export default function Payment() {
-  const { studentId } = useParams();
-  const [paymentStatus, setPaymentStatus] = useState(null);
-  const [errorMessage, setErrorMessage] = useState("");
+// It's a security risk to have this key here. You should load this from an environment variable.
+const stripePromise = loadStripe("pk_test_51S6D60Rz40SdBfbAF5SwGKccjfqf6qPb3SRHmocPzblkHAHaADgt2FmfKfp4ASkotvcS64B4aUYDGbLjUbl6kwRs00RipurT8f");
 
-  const handlePayment = async () => {
+const CheckoutForm = ({ studentEmail }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+  const amount = 500; // ₹500 fixed
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+
     try {
-      const response = await fetch(
-        `http://127.0.0.1:5000/newreg/pay_fee/${studentId}`,
-        { method: "POST" }
-      );
+      const res = await fetch("http://localhost:5000/payment/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount, email: studentEmail })
+      });
+      const data = await res.json();
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Network response was not ok");
+      if (data.error) {
+        setMessage(data.error);
+        return;
       }
 
-      const result = await response.json();
-      if (result.message) {
-        setPaymentStatus(result.message);
-        setErrorMessage("");
-      } else {
-        setPaymentStatus(null);
-        setErrorMessage("Payment failed. Please try again.");
+      const result = await stripe.confirmCardPayment(data.client_secret, {
+        payment_method: { card: elements.getElement(CardElement) }
+      });
+
+      if (result.error) {
+        setMessage(result.error.message);
+      } else if (result.paymentIntent.status === "succeeded") {
+        setMessage("Payment successful! Redirecting...");
+        
+        // This confirms the payment on the backend
+        await fetch("http://localhost:5000/payment/confirm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: studentEmail })
+        });
+        
+        // This redirects the user to the home page
+        navigate("/");
       }
-    } catch (error) {
-      setPaymentStatus(null);
-      setErrorMessage("An error occurred: " + error.message);
+    } catch (err) {
+      setMessage(err.message);
     }
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#f3f4f6",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: "white",
-          borderRadius: "16px",
-          padding: "30px",
-          width: "380px",
-          boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
-        }}
-      >
-        <h2
-          style={{
-            textAlign: "center",
-            fontSize: "24px",
-            fontWeight: "600",
-            color: "#374151",
-            marginBottom: "20px",
-          }}
-        >
-          Payment Portal
-        </h2>
-
-        <p style={{ textAlign: "center", color: "#4b5563", marginBottom: "15px" }}>
-          Student ID: <span style={{ fontFamily: "monospace" }}>{studentId}</span>
-        </p>
-
-        <div
-          style={{
-            backgroundColor: "#f9fafb",
-            border: "1px solid #e5e7eb",
-            borderRadius: "8px",
-            padding: "15px",
-            marginBottom: "20px",
-          }}
-        >
-          <p style={{ fontSize: "18px", fontWeight: "500", color: "#111827" }}>
-            Amount: ₹500
-          </p>
-          <p style={{ fontSize: "14px", color: "#6b7280" }}>Application Fee</p>
-        </div>
-
-        <button
-          onClick={handlePayment}
-          style={{
-            width: "100%",
-            backgroundColor: "#2563eb",
-            color: "white",
-            padding: "12px",
-            borderRadius: "8px",
-            fontSize: "16px",
-            fontWeight: "600",
-            border: "none",
-            cursor: "pointer",
-            transition: "0.3s",
-          }}
-          onMouseOver={(e) => (e.target.style.backgroundColor = "#1d4ed8")}
-          onMouseOut={(e) => (e.target.style.backgroundColor = "#2563eb")}
-        >
-          Pay Now
-        </button>
-
-        {paymentStatus && (
-          <p style={{ marginTop: "20px", color: "green", textAlign: "center" }}>
-            {paymentStatus}
-          </p>
-        )}
-        {errorMessage && (
-          <p style={{ marginTop: "20px", color: "red", textAlign: "center" }}>
-            {errorMessage}
-          </p>
-        )}
-      </div>
-    </div>
+    <form onSubmit={handleSubmit} style={{ maxWidth: "400px", margin: "50px auto", textAlign: "center" }}>
+      <h2>Pay ₹500</h2>
+      <CardElement options={{ hidePostalCode: true }} />
+      <button type="submit" disabled={!stripe} style={{ marginTop: "20px", padding: "12px 20px", fontSize: "16px", borderRadius: "8px", background: "#4cafef", color: "#fff", border: "none", cursor: "pointer" }}>
+        Pay Now
+      </button>
+      <p style={{ marginTop: "15px", color: "#555" }}>{message}</p>
+    </form>
   );
-}
+};
+
+const Payment = () => {
+  const { studentEmail } = useParams(); // get email from URL
+  return (
+    <Elements stripe={stripePromise}>
+      <CheckoutForm studentEmail={studentEmail} />
+    </Elements>
+  );
+};
+
+export default Payment;

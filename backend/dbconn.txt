@@ -123,3 +123,17 @@ ID Proof (Aadhaar, Driving License, e
 def view_applications():
     applications = list(application_form.find({}, {"_id": 0}))
     return jsonify(applications),200
+
+
+
+
+
+    
+| Card Type  | Card Number         | MM/YY           | CVC          |
+| ---------- | ------------------- | --------------- | ------------ |
+| Visa       | 4242 4242 4242 4242 | Any future date | Any 3 digits |
+| Mastercard | 5555 5555 5555 4444 | Any future date | Any 3 digits |
+| AmEx       | 3782 822463 10005   | Any future date | Any 4 digits |
+| Discover   | 6011 1111 1111 1117 | Any future date | Any 3 digits |
+| Diners     | 3056 930902 5904    | Any future date | Any 3 digits |
+| JCB        | 3566 1111 1111 1113 | Any future date | Any 3 digits |

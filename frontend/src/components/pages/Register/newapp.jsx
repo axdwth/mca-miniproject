@@ -61,7 +61,7 @@ export default function ApplicationForm() {
       const result = await res.json();
 
       if (res.ok) {
-        const studentId = result.data._id; 
+        const studentEmail = result.data.stud_email; 
         setMessage("Application Submitted Successfully");
 
     
@@ -91,11 +91,12 @@ export default function ApplicationForm() {
           stud_photo: null,
         });
 
-        navigate(`/newreg/payfee/${studentId}`);
+        navigate(`/newreg/payfee/${studentEmail}`);
       } else {
         setMessage(result.message || "Submission failed");
       }
     } catch (err) {
+      
       setMessage("Submission failed: " + err.message);
     }
   };

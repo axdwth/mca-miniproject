@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import "../../../styles/Login.css"
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -30,6 +30,7 @@ export default function Login() {
   };
 
   return (
+    <div className="login-container">
     <div style={{ maxWidth: "400px", margin: "50px auto" }}>
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
@@ -50,6 +51,7 @@ export default function Login() {
         <button type="submit">Login</button>
       </form>
       <p>{message}</p>
+    </div>
     </div>
   );
 }
