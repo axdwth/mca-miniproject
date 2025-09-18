@@ -9,7 +9,7 @@ export default function ViewApplications() {
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const resp = await axios.get("http://localhost:5000/Viewapplications");
+        const resp = await axios.get("http://localhost:5000/newapplications");
         setApplications(resp.data);
       } catch (error) {
         console.error("Error fetching applications:", error);
@@ -20,7 +20,7 @@ export default function ViewApplications() {
 
   return (
     <div className="applications-container">
-      <h3 className="applications-title">Student Applications 2025-27</h3>
+      <h3 className="applications-title">Student Applications</h3>
       <div className="table-wrapper">
         <table className="applications-table">
           <thead>
@@ -30,7 +30,7 @@ export default function ViewApplications() {
               <th>Qualification</th>
               <th>Email</th>
               <th>Phone</th>
-              <th>Marks</th>
+              <th>Application fee</th>
               <th>Entrance Score</th>
               <th>Submitted At</th>
               <th colSpan={3}>Action</th>
@@ -46,11 +46,11 @@ export default function ViewApplications() {
                 <td>{i.stud_qualification}</td>
                 <td>{i.stud_email}</td>
                 <td>{i.stud_phone}</td>
-                <td>{i.stud_percentage}</td>
-                <td>{i.stud_lbs}</td>
+                <td>{i.status}</td>
+                <td>{i.entrance_exam_score}</td>
                 <td>{new Date(i.submitted_at).toLocaleString()}</td>
                 <td>
-                  <button className="view-btn"  onClick={() => Navigate(`/admin/applicationdetails/${i.token}`)}>
+                  <button className="view-btn"  onClick={() => Navigate(`/admin/newapplications/${i.token}`)}>
                   View Details
                   </button>
                 </td>

@@ -9,7 +9,7 @@ export default function Applicationdetails() {
   useEffect(() => {
     const fetchApplication = async () => {
       try {
-        const resp = await axios.get(`http://localhost:5000/Viewapplicationdetails/${token}`);
+        const resp = await axios.get(`http://localhost:5000/Qviewnewapplicationdetails/${token}`);
         setApplication(resp.data);
       } catch (error) {
         console.error("Error fetching application:", error);
@@ -103,7 +103,7 @@ export default function Applicationdetails() {
   <p><b>Submitted At:</b> {new Date(application.submitted_at).toLocaleString()}</p>
     <button>Accept</button>
     <button>Reject</button>
-      <button>queue</button>
+
   </div>
   
     

@@ -24,7 +24,7 @@ function CheckoutForm({ student }) {
 
     try {
       // 1️⃣ Create PaymentIntent
-      const res = await fetch("http://localhost:5000/payment/create-payment-intent", {
+      const res = await fetch("http://localhost:5000/payment/create-payment-course", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: 50000, email: student.stud_email }),
@@ -58,7 +58,7 @@ function CheckoutForm({ student }) {
         }
         data.append("fee_paid", "true"); // 👈 force paid
 
-        await fetch("http://localhost:5000/newreg/register", {
+        await fetch("http://localhost:5000/student_applications", {
           method: "POST",
           body: data,
         });
@@ -74,7 +74,7 @@ function CheckoutForm({ student }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Pay ₹500 Application Fee</h2>
+      <h2>Pay 20000 Application Fee</h2>
       <CardElement />
       <button type="submit" disabled={!stripe}>Pay Now</button>
       <p>{message}</p>

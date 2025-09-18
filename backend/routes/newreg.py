@@ -98,8 +98,9 @@ def register_student():
             "mother_name": mother_name,
             "mother_phone": mother_phone,
             "stud_photo": file_paths.get("stud_photo"),
-            "fee_paid": False,
-            "status": "registered",
+            "stud_id": file_paths.get("stud_id"),
+            "fee_paid": request.form.get("fee_paid", "false").lower() == "true",
+    "status": "completed" if request.form.get("fee_paid", "false").lower() == "true" else "registered",
             "submitted_at": datetime.now().isoformat()
         }
 
@@ -131,3 +132,7 @@ from flask import send_from_directory
 @newreg_bp.route('/uploads/photos/<path:filename>')
 def get_photo(filename):
     return send_from_directory("uploads/photos", filename)
+
+@newreg_bp.route('/uploads/id_proof/<path:filename>')
+def get_id(filename):
+    return send_from_directory("uploads/id_proof", filename)

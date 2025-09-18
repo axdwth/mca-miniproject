@@ -1,101 +1,174 @@
-import { useParams} from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import ViewApplications from './Viewapplications'; 
-export default function Newapplicationdetailsapplicationdetails() {
-  const { token } = useParams(); // get email from URL  
-  const [application, setApplication] = useState(null);
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-  useEffect(() => {
-    const fetchApplication = async () => {
-      try {
-        const resp = await axios.get(`http://localhost:5000/newapplicationdetails/${token}`);
-        setApplication(resp.data);
-      } catch (error) {
-        console.error("Error fetching application:", error);
-      }
-    };
-    fetchApplication();
-  }, [token]);
+// MUI Components
+import {
+    Box, Paper, Typography, Grid, Avatar, Button,
+    CircularProgress, Alert, Divider, Chip
+} from '@mui/material';
 
-  if (!application) {
-    return <p>Loading...</p>;
-  }
+// Icons
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 
-  return (
+export default function ApplicationDetails() {
+    const { token } = useParams();
+    const [application, setApplication] = useState(null);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchApplication = async () => {
+            try {
+                const resp = await axios.get(`http://localhost:5000/viewnewapplicationdetails/${token}`);
+                setApplication(resp.data);
+            } catch (err) {
+                console.error("Error fetching application:", err);
+                setError('Failed to load application details. Please try again.');
+            }
+        };
+        fetchApplication();
+    }, [token]);
     
-    <div className="application-details">
-      
-  <h2>Student Application Details</h2>
-   
-  {/* Personal Info */}
-  <section>
+    // --- Action Handlers ---
+    const handleAccept = () => {
+        // Add your API call logic here
+        console.log(`Accepted: ${application.stud_name}`);
+        navigate('/admin/accepted');
+    };
 
-    <div>
-      <b>Photo:</b>
-      <br />
-{application.stud_photo && (
-  <img
-    src={`http://localhost:5000${application.stud_photo}`}
-    alt="Student"
-    style={{ width: "150px", height: "150px", objectFit: "cover" }}
-  />
-)}
-
-    </div>
-
-    <h3>Personal Information</h3>
-
-    <p><b>Name:</b> {application.stud_name}</p>
-    <p><b>Email:</b> {application.stud_email}</p>
-    <p><b>Date of Birth:</b> {application.stud_dob}</p>
-    <p><b>Phone:</b> {application.stud_phone}</p>
-    <p><b>Address:</b> {application.stud_address}</p>
-    <p><b>Gender:</b> {application.stud_gender}</p>
-    <p><b>Religion:</b> {application.stud_religion}</p>
-    <p><b>Nationality:</b> {application.stud_nationality}</p>
-    <p><b>Category:</b> {application.stud_category}</p>
-  </section>
-
-  {/* Academics */}
-  <section>
-    <h3>Academic Information</h3>
-
-    <p><b>10th Year:</b> {application.sslc_year}</p>
-    <p><b>10th Marks:</b> {application.sslc_marks}</p>
+    const handleReject = () => {
+        // Add your API call logic here
+        console.log(`Rejected: ${application.stud_name}`);
+        navigate('/admin/rejected');
+    };
+    
+    const handleQueue = () => {
+        // Add your API call logic here
+        console.log(`Queued: ${application.stud_name}`);
+        navigate('/admin/queue');
+    };
 
 
-    <p><b>12th Year:</b> {application.plustwo_year}</p>
-    <p><b>12th Marks:</b> {application.plustwo_marks}</p>
+    if (error) {
+        return <Alert severity="error" sx={{ m: 3 }}>{error}</Alert>;
+    }
 
+    if (!application) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
 
-    <p><b>UG Year:</b> {application.ug_year}</p>
-    <p><b>UG Marks:</b> {application.ug_marks}</p>
+    return (
+        <Box sx={{ p: 3, bgcolor: '#f4f6f8' }}>
+            <Paper elevation={4} sx={{ p: 4, borderRadius: 4 }}>
+                {/* --- Header Section --- */}
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                    <Avatar
+                        src={`http://localhost:5000${application.stud_photo}`}
+                        alt="Student Photo"
+                        sx={{ width: 100, height: 100, mr: 3 }}
+                    />
+                    <Box>
+                        <Typography variant="h4" fontWeight="bold">{application.stud_name}</Typography>
+                        <Typography variant="h6" color="text.secondary">{application.stud_email}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Submitted On: {new Date(application.submitted_at).toLocaleString()}
+                        </Typography>
+                    </Box>
+                </Box>
+                <Divider sx={{ mb: 3 }} />
 
-    <p><b>Qualification:</b> {application.stud_qualification}</p>
-   
+                {/* --- Main Content Grid --- */}
+                <Grid container spacing={4}>
+                    {/* Left Column */}
+                    <Grid item xs={12} md={6}>
+                        <InfoSection title="Personal Information">
+                            <InfoPair label="Date of Birth" value={application.stud_dob} />
+                            <InfoPair label="Phone" value={application.stud_phone} />
+                            <InfoPair label="Address" value={application.stud_address} />
+                            <InfoPair label="Gender" value={application.stud_gender} />
+                            <InfoPair label="Religion" value={application.stud_religion} />
+                             <InfoPair label="Nationality" value={application.stud_nationality} />
+                            <InfoPair label="Category" value={application.stud_category} />
+                        </InfoSection>
 
-    <p><b>Entrance Exam Score:</b> {application.entrance_exam_score}</p>
-    <p><b>Entrance Exam Rank:</b> {application.entrance_exam_rank}</p>
-  </section>
+                        <InfoSection title="Parent Information">
+                            <InfoPair label="Father's Name" value={application.father_name} />
+                           
+                            <InfoPair label="Father's Phone" value={application.father_phone} />
+                            <Divider sx={{ my: 1 }} />
+                            <InfoPair label="Mother's Name" value={application.mother_name} />
+                            
+                            <InfoPair label="Mother's Phone" value={application.mother_phone} />
+                        </InfoSection>
+                    </Grid>
 
-  {/* Parents */}
-  <section>
-    <h3>Parent Information</h3>
-    <p><b>Father Name:</b> {application.father_name}</p>
+                    {/* Right Column */}
+                    <Grid item xs={12} md={6}>
+                        <InfoSection title="Academic Information">
+                            <InfoPair label="Qualification" value={application.stud_qualification} />
+                           
+                            <InfoPair label="Entrance Exam Score" value={application.entrance_exam_score} />
+                            <InfoPair label="Entrance Exam Rank" value={application.entrance_exam_rank} />
+                             <Divider sx={{ my: 1 }} />
+                            <Typography variant="subtitle2" color="text.secondary"><b>UG:</b> {application.ug_college} ({application.ug_year}) - {application.ug_marks}</Typography>
+                            <Typography variant="subtitle2" color="text.secondary"><b>12th:</b> {application.plustwo_school} ({application.plustwo_year}) - {application.plustwo_marks}</Typography>
+                            <Typography variant="subtitle2" color="text.secondary"><b>10th:</b> {application.sslc_school} ({application.sslc_year}) - {application.sslc_marks}</Typography>
+                        </InfoSection>
 
-    <p><b>Father Phone:</b> {application.father_phone}</p>
+                        <InfoSection title="Uploaded Files">
+                          <FileChip 
+        label="ID Proof" 
+        src={application.stud_id ? `http://localhost:5000${application.stud_id}` : null} 
+    />
+                        </InfoSection>
+                    </Grid>
+                </Grid>
 
-    <p><b>Mother Name:</b> {application.mother_name}</p>
-    <p><b>Mother Phone:</b> {application.mother_phone}</p>
-  </section>
-
-  {/* File uploads */}
-  <section>
-
-</section>
-  <p><b>Submitted At:</b> {new Date(application.submitted_at).toLocaleString()}</p>
-    <button>Accept</button>
-  </div>
-  );
+                {/* --- Action Buttons --- */}
+                <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+                    <Button variant="contained" color="success" startIcon={<CheckCircleIcon />} onClick={handleAccept}>
+                        Accept
+                    </Button>
+                    <Button variant="contained" color="error" startIcon={<CancelIcon />} onClick={handleReject}>
+                        Reject
+                    </Button>
+                    <Button variant="contained" color="warning" startIcon={<HourglassTopIcon />} onClick={handleQueue}>
+                        Add to Queue
+                    </Button>
+                </Box>
+            </Paper>
+        </Box>
+    );
 }
+
+// --- Helper Components for cleaner layout ---
+const InfoSection = ({ title, children }) => (
+    <Box sx={{ mb: 3 }}>
+        <Typography variant="h6" fontWeight="600" gutterBottom>{title}</Typography>
+        {children}
+    </Box>
+);
+
+const InfoPair = ({ label, value }) => (
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
+        <Typography variant="body1" color="text.secondary">{label}:</Typography>
+        <Typography variant="body1" fontWeight="500">{value}</Typography>
+    </Box>
+);
+
+const FileChip = ({ label, uploaded }) => (
+    <Chip
+        label={label}
+        color={uploaded ? "success" : "default"}
+        variant="outlined"
+        size="small"
+        sx={{ mr: 1, mb: 1 }}
+    />
+);

@@ -1,68 +1,73 @@
-/* Container */
-.login-container {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 30px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  text-align: center;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+.login-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #4f46e5, #9333ea);
 }
 
-/* Heading */
-.login-container h2 {
-  margin-bottom: 20px;
-  font-size: 24px;
+.login-card {
+  background: #fff;
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.login-title {
+  margin-bottom: 24px;
+  font-size: 26px;
   font-weight: 600;
   color: #333;
 }
 
-/* Form */
-.login-container form {
+.login-form {
   display: flex;
   flex-direction: column;
+  gap: 15px;
 }
 
-/* Inputs */
-.login-container input {
-  margin: 10px 0;
-  padding: 12px;
+.login-input {
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
   font-size: 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  transition: all 0.3s ease;
+  transition: 0.3s;
 }
 
-.login-container input:focus {
-  border-color: #4cafef;
-  box-shadow: 0 0 5px rgba(76, 175, 239, 0.3);
+.login-input:focus {
+  border-color: #4f46e5;
   outline: none;
+  box-shadow: 0px 0px 6px rgba(79, 70, 229, 0.4);
 }
 
-/* Button */
-.login-container button {
-  margin-top: 15px;
+.login-btn {
   padding: 12px;
+  background: #4f46e5;
+  color: white;
   font-size: 16px;
-  font-weight: 600;
   border: none;
-  border-radius: 6px;
-  background: #4cafef;
-  color: #fff;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.1s ease;
+  transition: 0.3s;
 }
 
-.login-container button:hover {
-  background: #2f8cd6;
-  transform: translateY(-2px);
+.login-btn:hover {
+  background: #4338ca;
 }
 
-/* Message */
-.login-container p {
+.login-message {
   margin-top: 15px;
   font-size: 14px;
-  color: #555;
+  font-weight: 500;
+}
+
+.login-message.success {
+  color: #16a34a; /* green */
+}
+
+.login-message.error {
+  color: #dc2626; /* red */
 }
