@@ -28,3 +28,4 @@ dist-ssr
 *.sln
 *.sw?
 backend/routes/payment.py
+backend/.env
