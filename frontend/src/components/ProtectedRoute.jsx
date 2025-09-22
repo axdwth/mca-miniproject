@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { Box, CircularProgress } from '@mui/material';
 
 export default function ProtectedRoute({ children, role }) {
   const [auth, setAuth] = useState({ loading: true, allowed: false });
@@ -27,12 +28,14 @@ export default function ProtectedRoute({ children, role }) {
   }, [role]);
 
   if (auth.loading) {
-    return <p>Loading...</p>; // you can replace with spinner
+    return (  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                  <CircularProgress />
+                </Box>) // you can replace with spinner
   }
-
+{/*
   if (!auth.allowed) {
     return <Navigate to="/login" replace />;
   }
-
-  return children;
+*/}
+  return children;  
 }

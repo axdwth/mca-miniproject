@@ -1,64 +1,137 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import '../../../styles/ApplicationForm.css'; 
-export default function Application_Form() {
-  const [admissions, setAdmissions] = useState([]);
-  const [name, setName] = useState('');
-  const [qualification, setQualification] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [dob, setDob] = useState('');
-  const [address, setAddress] = useState('');
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-  const handleAdd = async (e) => {
-    e.preventDefault();
+export default function UpdateCriteria() {
+  const [criteria, setCriteria] = useState({
+    application_payment: "",
+    initial_payment: "",
+    caution_deposit: "",
+    annual_fee_year1: "",
+    annual_fee_year2: "",
+    cutoff_percentage: "",
+  });
 
-    if (!name || !qualification || !email || !phone || !dob || !address) {
-      alert('All fields are required');
-      return;
-    }
+  const [message, setMessage] = useState("");
 
-    const newStudent = {
-      stud_name: name,
-      stud_email: email,
-      stud_dob: dob,
-      stud_phone: phone,
-      stud_address: address,
-      stud_qualification: qualification,
-    };
-
-    try {
-      const resp = await axios.post('http://localhost:5000/student_applictions', newStudent);
-      if (resp.status === 200 || resp.status === 201) {
-        alert('Student added successfully!');
-        setAdmissions([...admissions, newStudent]);
-      
-        setName('');
-        setQualification('');
-        setAddress('');
-        setEmail('');
-        setPhone('');
-        setDob('');
+  // Fetch existing criteria from backend when page loads
+  useEffect(() => {
+    const fetchCriteria = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/feedetail");
+        if (res.data) {
+          setCriteria({
+            application_payment: res.data.application_payment || "",
+            initial_payment: res.data.initial_payment || "",
+            caution_deposit: res.data.caution_deposit || "",
+            annual_fee_year1: res.data.annual_fee_year1 || "",
+            annual_fee_year2: res.data.annual_fee_year2 || "",
+            cutoff_percentage: res.data.cutoff_percentage || "",
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching criteria:", err);
       }
-    } catch (error) {
-      alert(`Error: ${error.response?.data?.message || error.message}`);
+    };
+    fetchCriteria();
+  }, []);
+
+  const handleChange = (e) => {
+    setCriteria({
+      ...criteria,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post("http://localhost:5000/feedetails/update", criteria);
+      setMessage(res.data.message || "Criteria updated successfully!");
+    } catch (err) {
+      console.error(err);
+      setMessage("Error updating criteria.");
     }
   };
 
   return (
-    <center>
-    <div>
-      <h3>Admission Form</h3>
-      <form onSubmit={handleAdd}>
-        <input value={name} onChange={e => setName(e.target.value)} placeholder="Full Name" required />
-        <input value={qualification} onChange={e => setQualification(e.target.value)} placeholder="Qualification" required />
-        <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" type="email" required />
-        <textarea value={address} onChange={e => setAddress(e.target.value)} placeholder="Address" rows="3" required />
-        <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone Number" required />
-        <input value={dob} onChange={e => setDob(e.target.value)} type="date" required />
-        <button type="submit">UPDATE</button>
+    <div className="container mt-4">
+      <h2>Update Fee Criteria</h2>
+      {message && <div className="alert alert-info">{message}</div>}
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+  <div className="mb-3">
+          <label>Application fee Amount</label>
+          <input
+            type="number"
+            name="application_payment"
+            value={criteria.application_payment}
+            onChange={handleChange}
+            className="form-control"
+            required
+          />
+        </div>
+
+          <label>Initial Payment Amount</label>
+          <input
+            type="number"
+            name="initial_payment"
+            value={criteria.initial_payment}
+            onChange={handleChange}
+            className="form-control"
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label>Caution Deposit</label>
+          <input
+            type="number"
+            name="caution_deposit"
+            value={criteria.caution_deposit}
+            onChange={handleChange}
+            className="form-control"
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label>Annual Fee (Year 1)</label>
+          <input
+            type="number"
+            name="annual_fee_year1"
+            value={criteria.annual_fee_year1}
+            onChange={handleChange}
+            className="form-control"
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label>Annual Fee (Year 2)</label>
+          <input
+            type="number"
+            name="annual_fee_year2"
+            value={criteria.annual_fee_year2}
+            onChange={handleChange}
+            className="form-control"
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label>Cutoff % for Next Year</label>
+          <input
+            type="number"
+            name="cutoff_percentage"
+            value={criteria.cutoff_percentage}
+            onChange={handleChange}
+            className="form-control"
+            required
+          />
+        </div>
+
+        <button type="submit" className="btn btn-primary">Save Criteria</button>
       </form>
     </div>
-    </center>
   );
 }

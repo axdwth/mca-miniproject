@@ -101,9 +101,7 @@ export default function Applicationdetails() {
     <p><b>Degree Certificate:</b> {application.stud_degree_certificate ? "Uploaded" : "Not uploaded"}</p>
   </section>
   <p><b>Submitted At:</b> {new Date(application.submitted_at).toLocaleString()}</p>
-    <button>Accept</button>
-    <button>Reject</button>
-
+    <button>Allot</button>
   </div>
   
     

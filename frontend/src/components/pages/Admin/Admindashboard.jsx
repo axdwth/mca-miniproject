@@ -93,10 +93,9 @@ export default function AdminDashboard() {
     const navItems = [
         { text: 'New Applications', path: '/admin/viewapplications', icon: <ArticleIcon /> },
         { text: 'Accepted', path: '/admin/accepted', icon: <CheckCircleIcon /> },
-        { text: 'Waiting List', path: '/admin/queue', icon: <HourglassEmptyIcon /> },
+        { text: 'Waiting', path: '/admin/queue', icon: <HourglassEmptyIcon /> },
         { text: 'Rejected', path: '/admin/rejected', icon: <CancelIcon /> },
         {text:'settings',path:'/admin/settings',icon:<SettingsRoundedIcon/>},
-        {text: 'Manage Admins', path: '/admin/profile', icon: <ManageAccountsIcon /> }
         
     ];
 
@@ -151,7 +150,7 @@ export default function AdminDashboard() {
                     <StatCard title="New Applications" value={stats.new} color="#1976d2" />
                     <StatCard title="Accepted" value={stats.accepted} color="#2e7d32" />
                     <StatCard title="Waiting List" value={stats.waiting} color="#ed6c02" />
-                    <StatCard title="Rejected" value={stats.rejected} color="#d32f2f" />
+                    <StatCard title="Rejected" value={stats.rejected} color="#d32f2f" />    
                 </Grid>
 
                 {/* Chart */}
@@ -161,11 +160,13 @@ export default function AdminDashboard() {
                         <BarChart data={applicationData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="name" />
-                            <YAxis />
+                            <YAxis allowDecimals={false} />
                             <Tooltip />
                             <Legend />
-                            <Bar dataKey="New" fill="#8884d8" />
-                            <Bar dataKey="Accepted" fill="#82ca9d" />
+                            <Bar dataKey="Accepted" fill="#2e7d32" />
+                            <Bar dataKey="New" fill="#1976d2" />
+                            <Bar dataKey="Rejected" fill="#d32f2f" />
+                            <Bar dataKey="Waiting" fill="#ed6c02" />
                         </BarChart>
                     </ResponsiveContainer>
                 </Paper>
@@ -182,4 +183,5 @@ const StatCard = ({ title, value, color }) => (
             <Typography variant="h4" fontWeight="bold">{value}</Typography>
         </Paper>
     </Grid>
+    
 );

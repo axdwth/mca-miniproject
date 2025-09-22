@@ -33,24 +33,28 @@ export default function ApplicationDetails() {
     }, [token]);
     
     // --- Action Handlers ---
-    const handleAccept = () => {
-        // Add your API call logic here
-        console.log(`Accepted: ${application.stud_name}`);
-        navigate('/admin/accepted');
-    };
+const handleAccept = async () => {
+    try {
+        const resp = await fetch(`http://localhost:5000/applications/accept/${application.stud_email}`, { method: "PUT" });
+        if (resp.ok) {
+            navigate("/admin/accepted");
+        } else {
+            setError("Failed to accept application. Please try again.");
+        }
+    } catch (err) {
+        setError("Failed to accept application. Please try again.",err);
+    }
+};
 
-    const handleReject = () => {
-        // Add your API call logic here
-        console.log(`Rejected: ${application.stud_name}`);
-        navigate('/admin/rejected');
-    };
-    
-    const handleQueue = () => {
-        // Add your API call logic here
-        console.log(`Queued: ${application.stud_name}`);
-        navigate('/admin/queue');
-    };
+const handleReject = async () => {
+  await fetch(`http://localhost:5000/applications/reject/${application.stud_email}`, { method: "PUT" });
+  navigate("/admin/rejected");
+};
 
+const handleQueue = async () => {
+  await fetch(`http://localhost:5000/applications/queue/${application.stud_email}`, { method: "PUT" });
+  navigate("/admin/queue");
+};
 
     if (error) {
         return <Alert severity="error" sx={{ m: 3 }}>{error}</Alert>;
@@ -125,7 +129,7 @@ export default function ApplicationDetails() {
                         <InfoSection title="Uploaded Files">
                           <FileChip 
         label="ID Proof" 
-        src={application.stud_id ? `http://localhost:5000${application.stud_id}` : null} 
+        uploaded={!!application.stud_id}
     />
                         </InfoSection>
                     </Grid>

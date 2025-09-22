@@ -19,7 +19,7 @@ def create_payment_intent_route():
         return jsonify({"error": "Amount and email are required"}), 400
 
     try:
-        amount = int(amount)  # Stripe requires smallest currency unit
+        amount = int(float(amount) * 100) 
         intent = stripe.PaymentIntent.create(
             amount=amount,
             currency="inr",

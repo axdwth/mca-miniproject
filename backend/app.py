@@ -9,7 +9,9 @@ from datetime import datetime
 import os
 import secrets
 from bson import ObjectId
-
+import calendar
+from datetime import datetime
+from collections import defaultdict
 # --- App & config ---
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # change this to a secure value in production
@@ -18,7 +20,7 @@ app.config["SESSION_COOKIE_SAMESITE"] = "None"
 app.config["SESSION_COOKIE_SECURE"] = True 
 
 # Restrict CORS to your React dev server and allow cookies/sessions
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": ["http://localhost:5173","http://localhost:5174"]}},supports_credentials=True)
 
 # --- Database ---
 client = MongoClient("mongodb://localhost:27017/")
@@ -28,6 +30,8 @@ application_form = database["applications"]
 admin = database["admin"]
 critera = database["eligibility"]
 newreg = database["newreg"]
+rejected_apps= database["rejected"]
+queue_apps= database["qeued"]
 accepted_apps= database["accepted"]
 
 # --- Upload folders & helpers ---
@@ -57,55 +61,49 @@ tokens = {}
 # --- Dashboard Stats & Trends API ---
 @app.route("/admin/dashboard-stats", methods=["GET"])
 def dashboard_stats():
-    # Count applications by status
+    # --- CORRECTED LOGIC ---
+    # Count all documents from their respective, dedicated collections.
     new_count = newreg.count_documents({})
     accepted_count = accepted_apps.count_documents({})
-    # For demo, let's assume waiting and rejected are separate collections or status fields
-    waiting_count = newreg.count_documents({"status": "waiting"})
-    rejected_count = newreg.count_documents({"status": "rejected"})
+    # The count for 'rejected' should come from the 'rejected_apps' collection.
+    rejected_count = rejected_apps.count_documents({})
+    # The count for 'waiting' should come from the 'queue_apps' collection.
+    waiting_count = queue_apps.count_documents({})
 
-    # Example: Monthly trends (group by month)
-    # This assumes each doc has a 'submitted_at' field (ISO string)
-    from collections import defaultdict
-    import calendar
-    monthly_data = defaultdict(lambda: {"New": 0, "Accepted": 0})
-    # Use (year, month) tuple as key
-    for app in newreg.find({}, {"submitted_at": 1}):
-        if "submitted_at" in app:
-            dt = None
-            try:
-                dt = datetime.fromisoformat(app["submitted_at"])
-            except Exception:
-                continue
-            key = (dt.year, dt.month)
-            monthly_data[key]["New"] += 1
-    for app in accepted_apps.find({}, {"submitted_at": 1}):
-        if "submitted_at" in app:
-            dt = None
-            try:
-                dt = datetime.fromisoformat(app["submitted_at"])
-            except Exception:
-                continue
-            key = (dt.year, dt.month)
-            monthly_data[key]["Accepted"] += 1
+    # The rest of your chart logic can remain the same.
+    # It correctly calculates trends for New and Accepted applications.
+    monthly_data = defaultdict(lambda: {"New": 0, "Accepted": 0, "Rejected": 0, "Waiting": 0})
 
-    # Format for recharts: label as 'Sep 2025'
+    # Aggregate data from all relevant collections for the chart
+    for collection, status_name in [
+        (newreg, "New"),
+        (accepted_apps, "Accepted"),
+        (rejected_apps, "Rejected"),
+        (queue_apps, "Waiting")
+    ]:
+        for app in collection.find({}, {"submitted_at": 1}):
+            if "submitted_at" in app and app["submitted_at"]:
+                try:
+                    dt = datetime.fromisoformat(str(app["submitted_at"]))
+                    key = (dt.year, dt.month)
+                    monthly_data[key][status_name] +=1
+                except (ValueError, TypeError):
+                    continue
+    
     chart_data = []
-    # Sort keys chronologically
     for (year, month) in sorted(monthly_data.keys()):
         label = f"{calendar.month_abbr[month]} {year}"
-        chart_data.append({
-            "name": label,
-            "New": monthly_data[(year, month)]["New"],
-            "Accepted": monthly_data[(year, month)]["Accepted"]
-        })
+        data_point = {"name": label}
+        data_point.update(monthly_data[(year, month)])
+        chart_data.append(data_point)
 
+    # Return the correct counts in the JSON response
     return jsonify({
         "stats": {
             "new": new_count,
             "accepted": accepted_count,
-            "waiting": waiting_count,
-            "rejected": rejected_count
+            "waiting": waiting_count,  # Now uses the correct variable
+            "rejected": rejected_count # Now uses the correct variable
         },
         "chart": chart_data
     })
@@ -367,11 +365,15 @@ from routes.newreg import newreg_bp
 from routes.payment import payment_bp
 from routes.login import login_bp
 from routes.adminprofile import adminprofile_bp
+from routes.applications import applications_bp
+from routes.feedetails import feedetail_bp
 
 app.register_blueprint(newreg_bp, url_prefix="/newreg")
 app.register_blueprint(payment_bp, url_prefix="/payment")
 app.register_blueprint(adminprofile_bp)
 app.register_blueprint(login_bp)
+app.register_blueprint(applications_bp) 
+app.register_blueprint(feedetail_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)

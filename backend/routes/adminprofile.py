@@ -45,3 +45,6 @@ def update_admin_profile():
 		session["username"] = update_fields["email"]
 	admin = admin_collection.find_one({"email": session["username"]}, {"_id": 0, "password": 0})
 	return jsonify(admin)
+
+
+

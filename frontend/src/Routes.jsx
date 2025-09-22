@@ -12,8 +12,12 @@ import NewApplications from "./components/pages/Admin/newapplications";
 import Adminprofile from "./components/pages/Admin/profile";
 import Newreg from "./components/pages/Register/newapp";
 import Payment from "./components/pages/payment/payment";
-import ProtectedRoute from "./components/ProtectedRoute"; // ✅
-
+import ProtectedRoute from "./components/ProtectedRoute"; 
+import Accepted from "./components/pages/Admin/accepted";
+import Queue from "./components/pages/Admin/queue";
+import Rejected from "./components/pages/Admin/rejected";
+import Settings from "./components/pages/Admin/settings";
+import UpdateCriteria from "./components/pages/Admin/updatecriteria";
 export default function ARoutes() {
   return (
     <Routes>
@@ -68,7 +72,47 @@ export default function ARoutes() {
         path="/admin/updatecriteria"
         element={
           <ProtectedRoute role="admin">
-            <Updatecriteria />
+            <UpdateCriteria/>
+          </ProtectedRoute>
+        }
+      />
+<Route
+        path="/admin/accepted"
+        element={
+          <ProtectedRoute role="admin">
+            <Accepted/>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/queue"
+        element={
+          <ProtectedRoute role="admin">
+            <Queue/>
+          </ProtectedRoute>
+        }
+      />
+   <Route
+        path="/admin/settings"
+        element={
+          <ProtectedRoute role="admin">
+            <Settings/>
+          </ProtectedRoute>
+        }
+      />
+<Route
+        path="/admin/rejected"
+        element={
+          <ProtectedRoute role="admin">
+            <Rejected/>
+          </ProtectedRoute>
+        }
+      />
+<Route
+        path="/admin/updatecriteria"
+        element={
+          <ProtectedRoute role="admin">
+            <UpdateCriteria/>
           </ProtectedRoute>
         }
       />

@@ -78,7 +78,7 @@ export default function Login() {
           
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
-              margin="normal"
+              margin="none  "
               required
               fullWidth
               id="username"
@@ -98,7 +98,7 @@ export default function Login() {
               id="password"
               autoComplete="current-password"
               onChange={(e) => setPassword(e.target.value)}
-            />
+            />  
             <Button
               type="submit"
               fullWidth

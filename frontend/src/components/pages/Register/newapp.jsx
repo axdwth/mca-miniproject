@@ -27,29 +27,69 @@ export default function ApplicationForm() {
     mother_name: "",
     mother_phone: "",
     stud_photo: null,
+    stud_id: null,
   });
-
+console.log(setFormData);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({
+  stud_phone: "",
+  father_phone: "",
+  mother_phone: "",
+});
+
 
   const handleChange = (e) => {
-    const { name, type, value, files } = e.target;
-    if (type === "file") {
-      setFormData({ ...formData, [name]: files[0] });
+  const { name, type, value, files } = e.target;
+
+  if (type === "file") {
+    setFormData({ ...formData, [name]: files[0] });
+  } else {
+    setFormData({ ...formData, [name]: value });
+  }
+
+  // Validate phone numbers live
+  if (["stud_phone", "father_phone", "mother_phone"].includes(name)) {
+    if (!/^\d{0,10}$/.test(value)) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "Only digits allowed (max 10)",
+      }));
+    } else if (value.length > 0 && value.length < 10) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "Must be 10 digits",
+      }));
     } else {
-      setFormData({ ...formData, [name]: value });
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
-  };
+    setMessage("message",errors);
+  }
+};
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+
+const handleSubmit = (e) => {
+  e.preventDefault();
+
+  if (
+    formData.father_phone.length === 10 &&
+    formData.mother_phone.length === 10 &&
+    formData.stud_phone.length === 10
+  ) {
     setMessage("Redirecting to payment...");
-
-    // Redirect to payment page with formData
     navigate(`/newreg/payfee/${formData.stud_email}`, {
       state: { student: { ...formData } },
     });
-  };
+  } else {
+    setMessage("Please correct phone number errors before submitting.");
+  }
+};
+// Example: last 50 years till current year
+const years = Array.from(
+  { length: 50 },
+  (_, i) => new Date().getFullYear() - i
+);
+
 
   return (
     <form onSubmit={handleSubmit}>
@@ -81,13 +121,48 @@ export default function ApplicationForm() {
 
       {/* Academic Details */}
       <h3>Academic Information</h3>
-      <input type="text" name="sslc_year" value={formData.sslc_year} onChange={handleChange} placeholder="SSLC Year" required />
+  <select
+  name="sslc_year"
+  value={formData.sslc_year}
+  onChange={handleChange}
+  required
+>
+  <option value="">Select SSLC Year</option>
+  {years.map((year) => (
+    <option key={year} value={year}>
+      {year}
+    </option>
+  ))}
+</select>
+
       <input type="text" name="sslc_marks" value={formData.sslc_marks} onChange={handleChange} placeholder="SSLC Marks" required />
+<select
+  name="plustwo_year"
+  value={formData.plustwo_year}
+  onChange={handleChange}
+  required
+>
+  <option value="">Select Plus Two Year</option>
+  {years.map((year) => (
+    <option key={year} value={year}>
+      {year}
+    </option>
+  ))}
+</select>
 
-      <input type="text" name="plustwo_year" value={formData.plustwo_year} onChange={handleChange} placeholder="Plus Two Year" required />
       <input type="text" name="plustwo_marks" value={formData.plustwo_marks} onChange={handleChange} placeholder="Plus Two Marks" required />
-
-      <input type="text" name="ug_year" value={formData.ug_year} onChange={handleChange} placeholder="UG Passing Year" />
+<select
+  name="ug_year"
+  value={formData.ug_year}
+  onChange={handleChange}
+>
+  <option value="">Select UG Passing Year</option>
+  {years.map((year) => (
+    <option key={year} value={year}>
+      {year}
+    </option>
+  ))}
+</select>
       <input type="text" name="ug_marks" value={formData.ug_marks} onChange={handleChange} placeholder="UG Marks" />
 
       <input type="text" name="stud_qualification" value={formData.stud_qualification} onChange={handleChange} placeholder="Highest Qualification" required />
