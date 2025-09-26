@@ -1,0 +1,113 @@
+.applications-container {
+  max-width: 1300px;
+  margin: 40px auto;
+  padding: 25px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to bottom, #f0f4ff, #ffffff);
+  border-radius: 15px;
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+  position: relative;
+}
+
+/* Optional faint background image */
+.applications-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('/assets/bg-panel.png') center/cover no-repeat;
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.applications-title {
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 25px;
+  font-weight: 700;
+  color: #0d47a1;
+  z-index: 1;
+  position: relative;
+}
+
+/* Search box with icon */
+.search-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 25px;
+  position: relative;
+  z-index: 1;
+}
+
+.search-box input {
+  width: 360px;
+  padding: 10px 40px 10px 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 8px rgba(25, 118, 210, 0.3);
+}
+
+.search-icon {
+  position: absolute;
+  right: 15px;
+  color: #999;
+}
+
+/* Table styling */
+.table-wrapper {
+  overflow-x: auto;
+  z-index: 1;
+  position: relative;
+}
+
+.applications-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.applications-table thead {
+  background: linear-gradient(90deg, #1976d2, #42a5f5);
+  color: #fff;
+  font-weight: 600;
+}
+
+.applications-table th, .applications-table td {
+  padding: 14px 18px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.applications-table tbody tr:hover {
+  background-color: rgba(25, 118, 210, 0.08);
+  transition: all 0.3s ease;
+}
+
+/* Paid / unpaid badges */
+.badge {
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  display: inline-block;
+}
+
+.paid-badge {
+  background-color: #43a047; /* green */
+}
+
+.unpaid-badge {
+  background-color: #e53935; /* red */
+}
